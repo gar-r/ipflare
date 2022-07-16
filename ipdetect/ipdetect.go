@@ -10,7 +10,8 @@ import (
 // changes in the public IP address of the current host.
 type ChangeDetector struct {
 	Frequency time.Duration
-	C, Err    chan string
+	C         chan string
+	Err       chan error
 	previous  string
 }
 
@@ -20,7 +21,7 @@ func NewChangeDetector(freq time.Duration) *ChangeDetector {
 	return &ChangeDetector{
 		Frequency: freq,
 		C:         make(chan string),
-		Err:       make(chan string),
+		Err:       make(chan error),
 	}
 }
 
@@ -33,7 +34,7 @@ func (c *ChangeDetector) Start() {
 		for range t.C {
 			current, err := ipLookupFunc()
 			if err != nil {
-				c.Err <- err.Error()
+				c.Err <- err
 			} else if current != c.previous {
 				c.previous = current
 				c.C <- current
