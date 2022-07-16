@@ -1,0 +1,6 @@
+# binary
+ipflare
+ipflare.exe
+
+# private launch configurations
+.vscode/*_private.json
