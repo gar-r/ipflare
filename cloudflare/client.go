@@ -7,8 +7,6 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-const baseURL = "https://api.cloudflare.com/client/v4"
-
 // client is a CloudFlare api client
 type client interface {
 
@@ -30,12 +28,11 @@ type httpClient struct {
 }
 
 func (c *httpClient) GetZone(zone string) (*Zone, error) {
-	url := fmt.Sprintf("%s/zones", baseURL)
 	robj := &Response[[]*Zone]{}
 	res, err := c.getRequest().
 		SetQueryParam("name", zone).
 		SetResult(robj).
-		Get(url)
+		Get("/zones")
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +41,7 @@ func (c *httpClient) GetZone(zone string) (*Zone, error) {
 }
 
 func (c *httpClient) GetRecord(zoneId, recordName string) (*Record, error) {
-	url := fmt.Sprintf("%s/zones/%s/dns_records", baseURL, zoneId)
+	url := fmt.Sprintf("/zones/%s/dns_records", zoneId)
 	robj := &Response[[]*Record]{}
 	res, err := c.getRequest().
 		SetQueryParam("name", recordName).
@@ -58,7 +55,7 @@ func (c *httpClient) GetRecord(zoneId, recordName string) (*Record, error) {
 }
 
 func (c *httpClient) UpdateRecord(zoneId string, record *Record) (*Record, error) {
-	url := fmt.Sprintf("%s/zones/%s/dns_records/%s", baseURL, zoneId, record.Id)
+	url := fmt.Sprintf("/zones/%s/dns_records/%s", zoneId, record.Id)
 	robj := &Response[*Record]{}
 	res, err := c.getRequest().
 		SetBody(record).
@@ -71,7 +68,7 @@ func (c *httpClient) UpdateRecord(zoneId string, record *Record) (*Record, error
 }
 
 func (c *httpClient) getRequest() *resty.Request {
-	r := resty.New()
+	r := resty.New().SetBaseURL("https://api.cloudflare.com/client/v4")
 	return r.R().
 		SetHeader("Content-Type", "application/json").
 		SetAuthToken(c.authToken)
