@@ -6,7 +6,13 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go"
+            "program": "main.go",
+            "args": [
+                "-f", "30",
+                "-z", "<zone name>",
+                "-r", "<record name>",
+                "-t", "<auth token>",
+            ]
         }
     ]
 }

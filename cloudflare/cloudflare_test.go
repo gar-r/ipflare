@@ -2,7 +2,6 @@ package cloudflare
 
 import (
 	"errors"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,24 +11,17 @@ func TestNewCloudFlare(t *testing.T) {
 
 	zone := "zone"
 	record := "record"
+	token := "token"
 
-	t.Run("struct initialized", func(t *testing.T) {
-		cf := NewCloudFlare(zone, record)
-		assert.Equal(t, zone, cf.zone)
-		assert.Equal(t, record, cf.record)
-		assert.NotNil(t, cf.client)
-	})
+	cf := NewCloudFlare(zone, record, token)
+	assert.Equal(t, zone, cf.zone)
+	assert.Equal(t, record, cf.record)
+	assert.NotNil(t, cf.client)
 
-	t.Run("auth token obtained from env", func(t *testing.T) {
-		token := "test token"
-		os.Setenv(authTokenEnvVarName, token)
-		cf := NewCloudFlare(zone, record)
+	assert.IsType(t, &httpClient{}, cf.client)
 
-		assert.IsType(t, &httpClient{}, cf.client)
-
-		client := cf.client.(*httpClient)
-		assert.Equal(t, token, client.authToken)
-	})
+	client := cf.client.(*httpClient)
+	assert.Equal(t, token, client.authToken)
 
 }
 

@@ -1,9 +1,5 @@
 package cloudflare
 
-import "os"
-
-const authTokenEnvVarName = "CLOUDFLARE_API_TOKEN"
-
 // CloudFlare implements Updater and uses the CloudFlare API to modify
 // a DNS record identified by its zone name and record name.
 type CloudFlare struct {
@@ -12,12 +8,14 @@ type CloudFlare struct {
 	record string
 }
 
-func NewCloudFlare(zone, record string) *CloudFlare {
+// NewCloudFlare creates a new CloudFlare instance.
+// The auth token is obtained from the os environment.
+func NewCloudFlare(zone, record, authToken string) *CloudFlare {
 	return &CloudFlare{
 		zone:   zone,
 		record: record,
 		client: &httpClient{
-			authToken: os.Getenv(authTokenEnvVarName),
+			authToken: authToken,
 		},
 	}
 }
