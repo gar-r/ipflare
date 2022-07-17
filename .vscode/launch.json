@@ -2,16 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Package",
+            "name": "Launch",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "./",
             "args": [
+                "-t", "<cloudflare api token>",
                 "-f", "30",
-                "-z", "<zone name>",
-                "-r", "<record name>",
-                "-t", "<auth token>",
+                "-e", "<zone1/record1>",
+                "-e", "<zone1/record2>",
+                "-e", "<zone2/record1>",
             ]
         }
     ]
