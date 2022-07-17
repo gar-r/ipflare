@@ -1,5 +1,7 @@
 # ipflare
 
+![banner](etc/banner.png)
+
 ## about
 
 This small utility can help with operating a web service from behind a dynamic IP address - similar to dynamic DNS.
