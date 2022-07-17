@@ -3,6 +3,8 @@ package cloudflare
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -68,7 +70,14 @@ func (c *httpClient) UpdateRecord(zoneId string, record *Record) (*Record, error
 }
 
 func (c *httpClient) getRequest() *resty.Request {
-	r := resty.New().SetBaseURL("https://api.cloudflare.com/client/v4")
+	r := resty.New().
+		SetBaseURL("https://api.cloudflare.com/client/v4").
+		SetRetryCount(5).
+		SetRetryWaitTime(10 * time.Second).
+		AddRetryCondition(func(r *resty.Response, err error) bool {
+			return r.StatusCode() == http.StatusTooManyRequests ||
+				r.StatusCode() == http.StatusRequestTimeout
+		})
 	return r.R().
 		SetHeader("Content-Type", "application/json").
 		SetAuthToken(c.authToken)
