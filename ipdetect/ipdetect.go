@@ -1,6 +1,7 @@
 package ipdetect
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -45,8 +46,11 @@ func (c *ChangeDetector) Start() {
 
 var ipLookupFunc = func() (string, error) {
 	r := resty.New()
+	r.SetTransport(&http.Transport{
+		TLSHandshakeTimeout: 30 * time.Second,
+	})
 	res, err := r.NewRequest().
 		SetQueryParam("format", "text").
-		Get("https://api64.ipify.org")
+		Get("https://api.ipify.org/")
 	return res.String(), err
 }
