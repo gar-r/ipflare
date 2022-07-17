@@ -41,10 +41,10 @@ Notes:
 
 ```
 ipflare "-t", "token" \
-        "-f", "15",
-        "-e", "website1/mail.example.com",
-        "-e", "website1/*.example.com",
-        "-e", "website2/conference.chat.com",
+        "-f", "15" \
+        "-e", "website1/mail.example.com" \
+        "-e", "website1/*.example.com" \
+        "-e", "website2/conference.chat.com"
 ```
 
 The above command starts the application with a `15` second checking frequency, and the token `token` (for each request to CloudFlare this will be added to the Authentication request headers).
@@ -57,4 +57,71 @@ The command adds the following DNS entries:
 
 ## docker image
 
-TODO
+You can pull the latest docker image from docker hub...
+
+```
+docker pull garric/ipflare
+```
+
+...or use the included Dockerfile to build the image yourself.
+
+```
+cd <source code root>
+docker build -t garric/ipflare .
+```
+
+When running the app with docker, the command line arguments can be specified in the usual fashion.
+
+Example:
+
+```
+docker run ipflare \
+   -t "..." \
+   -e "mysite/*.example.com"
+```
+
+```
+ipflare starting with the following parameters:
+auth token: [...]
+ frequency: 30
+   entries: [mysite/*.example.com]
+```
+
+## running as a system service
+
+It is recommended to run `ipflare` as a system service, allowing it to run always without interruption. The steps vary from OS to OS. On GNU/Linux operating systems one way to achieve this is by creating a systemd service, preferably using [systemd-docker](https://github.com/ibuildthecloud/systemd-docker) to wrap the systemd unit. The following example shows a systemd unit which uses the app's docker image:
+
+```
+[Unit]
+Description=ipflare service
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=120
+Restart=always
+ExecStartPre=/usr/bin/docker pull garric/ipflare
+ExecStart=/usr/bin/docker run --rm --name %n garric/ipflare \
+    -t "token" \
+    -f 10 \
+    -e "my-site/*.example.com"
+
+[Install]
+WantedBy=multi-user.target
+
+```
+
+To start and enable the above systemd service:
+
+```
+sudo cp etc/ipflare.service /etc/systemd/system/
+sudo systemctl enable ipflare.service
+sudo systemctl start ipflare.service
+```
+
+The application prints to STDOUT, so you can easily check the output as well:
+
+```
+sudo systemctl status ipflare.service
+```
+
