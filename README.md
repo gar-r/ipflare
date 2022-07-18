@@ -69,7 +69,7 @@ docker pull garric/ipflare
 
 ```
 cd <source code root>
-docker build -t garric/ipflare .
+docker build -t ipflare .
 ```
 
 When running the app with docker, the command line arguments can be specified in the usual fashion.
@@ -82,6 +82,8 @@ docker run ipflare \
    -e "mysite/*.example.com"
 ```
 
+Example output:
+
 ```
 ipflare starting with the following parameters:
 auth token: [...]
@@ -89,21 +91,38 @@ auth token: [...]
    entries: [mysite/*.example.com]
 ```
 
-## running as a system service
+## running as a service
 
-It is recommended to run `ipflare` as a system service, allowing it to run always without interruption. The steps vary from OS to OS. On GNU/Linux operating systems one way to achieve this is by creating a systemd service, preferably using [systemd-docker](https://github.com/ibuildthecloud/systemd-docker) to wrap the systemd unit. The following example shows a systemd unit which uses the app's docker image:
+### using docker restart policy
+
+If you are using the docker image, the recommended way is to use a docker restart policy (`--restart`):
+
+```
+docker run -d --restart always --name ipflare garric/ipflare \
+   -t "..." \
+   -e "mysite/*.example.com"
+```
+
+To checking the logs, use docker to list the container id, then use the container id to display the logs:
+
+```
+docker ps -a
+docker logs <id>
+```
+
+### running the binary as a systemd service
+
+In case you want to run `ipflare` directly as a systemd service, the following example shows how to create a systemd unit:
 
 ```
 [Unit]
 Description=ipflare service
-After=docker.service
-Requires=docker.service
+After=network-online.target
+Wants=network-online.target
 
 [Service]
-TimeoutStartSec=120
 Restart=always
-ExecStartPre=/usr/bin/docker pull garric/ipflare
-ExecStart=/usr/bin/docker run --rm --name %n garric/ipflare \
+ExecStart=/path/to/ipflare \
     -t "token" \
     -f 10 \
     -e "my-site/*.example.com"
@@ -113,10 +132,9 @@ WantedBy=multi-user.target
 
 ```
 
-To start and enable the above systemd service:
+Copy the service file to `/etc/systemd/system`, then start and enable the systemd service:
 
 ```
-sudo cp etc/ipflare.service /etc/systemd/system/
 sudo systemctl enable ipflare.service
 sudo systemctl start ipflare.service
 ```
