@@ -1,6 +1,8 @@
 package ipdetect
 
 import (
+	"fmt"
+	"net"
 	"net/http"
 	"time"
 
@@ -52,5 +54,12 @@ var ipLookupFunc = func() (string, error) {
 	res, err := r.NewRequest().
 		SetQueryParam("format", "text").
 		Get("https://api.ipify.org/")
-	return res.String(), err
+	if err != nil {
+		return "", err
+	}
+	var ip = res.String()
+	if net.ParseIP(ip) == nil {
+		return "", fmt.Errorf("result not a valid ip: %s", ip)
+	}
+	return ip, nil
 }
