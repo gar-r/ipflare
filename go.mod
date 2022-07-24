@@ -1,4 +1,4 @@
-module github.com/garricasaurus/ipflare
+module ipflare
 
 go 1.18
 

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/garricasaurus/ipflare/cloudflare"
-	"github.com/garricasaurus/ipflare/ipdetect"
+	"ipflare/cloudflare"
+	"ipflare/ipdetect"
 )
 
 func main() {
