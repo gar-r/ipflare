@@ -1,7 +1,7 @@
 package ipdetect
 
 import (
-	"fmt"
+	"errors"
 	"net"
 	"net/http"
 	"time"
@@ -59,7 +59,7 @@ var ipLookupFunc = func() (string, error) {
 	}
 	var ip = res.String()
 	if net.ParseIP(ip) == nil {
-		return "", fmt.Errorf("result not a valid ip: %s", ip)
+		return "", errors.New("response is not a valid ip")
 	}
 	return ip, nil
 }
