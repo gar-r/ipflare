@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="759.39569"
+   height="500.09579"
+   viewBox="0 0 759.39571 500.09579"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="0.70677083"
+     inkscape:cx="504.40678"
+     inkscape:cy="285.09948"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3589">
+      <stop
+         style="stop-color:#2c00a3;stop-opacity:1;"
+         offset="0"
+         id="stop3585" />
+      <stop
+         style="stop-color:#2cd8b5;stop-opacity:1;"
+         offset="1"
+         id="stop3587" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1318">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop1314" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop1316" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1318"
+       id="linearGradient1320"
+       x1="235.31742"
+       y1="598.76426"
+       x2="542.85849"
+       y2="598.76426"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3589"
+       id="linearGradient3591"
+       x1="282.02964"
+       y1="518.57837"
+       x2="594.34292"
+       y2="518.57837"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <ellipse
+       style="fill:none;stroke:#190b71;stroke-width:24.0839;stroke-dasharray:none;stroke-opacity:1"
+       id="path1039"
+       cx="380.4744"
+       cy="228.93239"
+       rx="142.49107"
+       ry="129.95609" />
+    <ellipse
+       style="fill:none;stroke:#190b71;stroke-width:26;stroke-dasharray:none;stroke-opacity:1"
+       id="path1151"
+       cx="187.80951"
+       cy="339.24927"
+       rx="81.936256"
+       ry="77.086403" />
+    <ellipse
+       style="fill:none;stroke:#190b71;stroke-width:26;stroke-dasharray:none;stroke-opacity:1"
+       id="path1153"
+       cx="447.14261"
+       cy="190.92114"
+       rx="60.552689"
+       ry="62.890568" />
+    <ellipse
+       style="fill:none;stroke:#190b71;stroke-width:26;stroke-dasharray:none;stroke-opacity:1"
+       id="path1159"
+       cx="215.6485"
+       cy="156.88928"
+       rx="29.071482"
+       ry="27.056927" />
+    <ellipse
+       style="fill:none;stroke:#190b71;stroke-width:26;stroke-dasharray:none;stroke-opacity:1"
+       id="path1159-3"
+       cx="519.48969"
+       cy="342.09839"
+       rx="29.071482"
+       ry="27.056927" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:110.436px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:url(#linearGradient3591);fill-opacity:1;stroke:none;stroke-width:10;stroke-dasharray:none"
+       x="273.63651"
+       y="550.99133"
+       id="text1239"
+       transform="scale(1.1698663,0.85479853)"><tspan
+         sodipodi:role="line"
+         id="tspan1237"
+         x="273.63651"
+         y="550.99133"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:110.43599701px;font-family:Ubuntu;-inkscape-font-specification:'Ubuntu, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:url(#linearGradient3591);fill-opacity:1;stroke:none;stroke-width:10;stroke-dasharray:none">ipflare</tspan></text>
+  </g>
+</svg>

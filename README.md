@@ -1,6 +1,6 @@
 # ipflare
 
-![banner](etc/banner.png)
+![banner](etc/logo.svg)
 
 ## about
 
