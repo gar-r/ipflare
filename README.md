@@ -59,10 +59,10 @@ The command adds the following DNS entries:
 
 ## docker image
 
-You can pull the latest docker image from docker hub...
+You can pull the latest docker image:
 
 ```
-docker pull garric/ipflare
+docker pull git.okki.hu/garric/ipflare
 ```
 
 ...or use the included Dockerfile to build the image yourself.
@@ -98,7 +98,7 @@ auth token: [...]
 If you are using the docker image, the recommended way is to use a docker restart policy (`--restart`):
 
 ```
-docker run -d --restart always --name ipflare garric/ipflare \
+docker run -d --restart always --name ipflare git.okki.hu/garric/ipflare \
    -t "..." \
    -e "mysite/*.example.com"
 ```
