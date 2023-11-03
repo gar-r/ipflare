@@ -1,27 +1,31 @@
-package ipdetect
+package ip
 
 import (
-	"errors"
-	"net"
-	"net/http"
 	"time"
-
-	"github.com/go-resty/resty/v2"
 )
+
+var DefaultIpProvider IpProvider = &Ipify{}
 
 // ChangeDetector runs in the background, sending notifications about
 // changes in the public IP address of the current host.
 type ChangeDetector struct {
-	Frequency time.Duration
+	Provider  IpProvider
 	C         chan string
 	Err       chan error
 	previous  string
+	Frequency time.Duration
+}
+
+// IpProvider provides the public IP address.
+type IpProvider interface {
+	GetPublicIp() (string, error)
 }
 
 // NewChangeDetector initializes a ChangeDetector with the
-// given polling frequency.
+// given polling frequency and the default ip provider.
 func NewChangeDetector(freq time.Duration) *ChangeDetector {
 	return &ChangeDetector{
+		Provider:  DefaultIpProvider,
 		Frequency: freq,
 		C:         make(chan string),
 		Err:       make(chan error),
@@ -35,7 +39,7 @@ func (c *ChangeDetector) Start() {
 	t := time.NewTicker(c.Frequency)
 	go func() {
 		for range t.C {
-			current, err := ipLookupFunc()
+			current, err := c.Provider.GetPublicIp()
 			if err != nil {
 				c.Err <- err
 			} else if current != c.previous {
@@ -44,22 +48,4 @@ func (c *ChangeDetector) Start() {
 			}
 		}
 	}()
-}
-
-var ipLookupFunc = func() (string, error) {
-	r := resty.New()
-	r.SetTransport(&http.Transport{
-		TLSHandshakeTimeout: 30 * time.Second,
-	})
-	res, err := r.NewRequest().
-		SetQueryParam("format", "text").
-		Get("https://api.ipify.org/")
-	if err != nil {
-		return "", err
-	}
-	var ip = res.String()
-	if net.ParseIP(ip) == nil {
-		return "", errors.New("response is not a valid ip")
-	}
-	return ip, nil
 }

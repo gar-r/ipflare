@@ -1,0 +1,8 @@
+frequency: 30             # check frequency in seconds
+entries:
+  example.com:            # cloudflare zone name
+    - "foo.example.com"   # dns record to update (type "A" only)
+    - "bar.example.com"
+    - "baz.example.com"
+  domain.org:
+    - "domain.org"        # update root record

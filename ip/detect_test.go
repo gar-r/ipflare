@@ -1,4 +1,4 @@
-package ipdetect
+package ip
 
 import (
 	"errors"
@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestNewChangeDetector(t *testing.T) {
@@ -20,40 +21,42 @@ func TestNewChangeDetector(t *testing.T) {
 		assert.NotNil(t, cd.C)
 		assert.NotNil(t, cd.Err)
 	})
+
+	t.Run("provider initialized", func(t *testing.T) {
+		cd := NewChangeDetector(time.Second)
+		assert.NotNil(t, cd.Provider)
+	})
 }
 
 func TestStart(t *testing.T) {
+	cd := NewChangeDetector(time.Millisecond)
 
 	t.Run("error emitted", func(t *testing.T) {
-		ipLookupFunc = func() (string, error) {
-			return "", errors.New("test error")
-		}
-		cd := NewChangeDetector(time.Millisecond)
+		p := &TestProvider{}
+		p.On("GetPublicIp").Return("", errors.New("test error"))
+		cd.Provider = p
 		cd.Start()
 		err := <-cd.Err
 		assert.EqualError(t, err, "test error")
 	})
 
 	t.Run("change emitted", func(t *testing.T) {
-		ipLookupFunc = func() (string, error) {
-			return "test2", nil
-		}
-		cd := NewChangeDetector(time.Millisecond)
-		cd.previous = "test1"
+		p := &TestProvider{}
+		p.On("GetPublicIp").Return("127.0.0.1", nil)
+		cd.Provider = p
 		cd.Start()
 		ip := <-cd.C
-		assert.Equal(t, "test2", ip)
+		assert.Equal(t, "127.0.0.1", ip)
 	})
 
 	t.Run("nothing emitted when no change", func(t *testing.T) {
-		val := "test"
-		ipLookupFunc = func() (string, error) {
-			return val, nil
-		}
-		cd := NewChangeDetector(time.Millisecond)
-		cd.previous = val
-		timeout := time.After(10 * time.Millisecond)
+		ip := "127.0.0.1"
+		p := &TestProvider{}
+		p.On("GetPublicIp").Return(ip, nil)
+		cd.previous = ip
+		cd.Provider = p
 		cd.Start()
+		timeout := time.After(10 * time.Millisecond)
 		for {
 			select {
 			case <-cd.C:
@@ -63,5 +66,13 @@ func TestStart(t *testing.T) {
 			}
 		}
 	})
+}
 
+type TestProvider struct {
+	mock.Mock
+}
+
+func (t *TestProvider) GetPublicIp() (string, error) {
+	args := t.Called()
+	return args.String(0), args.Error(1)
 }

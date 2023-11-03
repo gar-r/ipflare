@@ -1,24 +1,32 @@
 package main
 
 import (
+	"ipflare/config"
+	"ipflare/dns"
+	"ipflare/ip"
 	"log"
-	"strings"
+	"os"
 	"time"
-
-	"ipflare/cloudflare"
-	"ipflare/ipdetect"
 )
 
+const (
+	EnvConfigPath = "CONFIG_PATH"
+	EnvApiKey     = "CLOUDFLARE_API_TOKEN"
+)
+
+const DefaultConfigPath = "/etc/ipflare/config.yaml"
+
 func main() {
-	initArgs()
-	cd := ipdetect.NewChangeDetector(time.Duration(freq) * time.Second)
-	cf := cloudflare.NewCloudFlare(authToken)
-	addEntries(cf)
-	logStartup()
-	startLoop(cd, cf)
+	cfg := initConfig()
+	cd := ip.NewChangeDetector(time.Second * time.Duration(cfg.Frequency))
+	updater, err := dns.NewCloudflareUpdater(cfg)
+	if err != nil {
+		panic(err)
+	}
+	startLoop(cd, updater)
 }
 
-func startLoop(cd *ipdetect.ChangeDetector, cf *cloudflare.CloudFlare) {
+func startLoop(cd *ip.ChangeDetector, updater dns.Updater) {
 	cd.Start()
 	for {
 		select {
@@ -26,7 +34,7 @@ func startLoop(cd *ipdetect.ChangeDetector, cf *cloudflare.CloudFlare) {
 			log.Println(err)
 		case ip := <-cd.C:
 			log.Printf("ip change detected: %s", ip)
-			errs := cf.Update(ip)
+			errs := updater.Update(ip)
 			if len(errs) > 0 {
 				logErrs(errs)
 			}
@@ -34,25 +42,31 @@ func startLoop(cd *ipdetect.ChangeDetector, cf *cloudflare.CloudFlare) {
 	}
 }
 
-func addEntries(cf *cloudflare.CloudFlare) {
-	for _, e := range entries {
-		parts := strings.Split(e, "/")
-		if len(parts) != 2 {
-			log.Fatalf("invalid entry: %s", e)
-		}
-		cf.AddEntry(parts[0], parts[1])
+func initConfig() *config.Config {
+	path := os.Getenv(EnvConfigPath)
+	if path == "" {
+		path = DefaultConfigPath
 	}
+	cfg, err := config.Parse(path)
+	if err != nil {
+		panic(err)
+	}
+	apiKey := os.Getenv(EnvApiKey)
+	if apiKey != "" {
+		cfg.ApiToken = apiKey
+	}
+	logStartup(path, cfg)
+	return cfg
 }
 
-func logStartup() {
+func logStartup(configLocation string, cfg *config.Config) {
 	log.Println("ipflare starting with the following parameters:")
-	log.Printf("%10s: %s", "auth token", "[...]")
-	log.Printf("%10s: %d", "frequency", freq)
-	log.Printf("%10s: %s", "entries", entries.String())
+	log.Printf("config location: %s\n", configLocation)
+	log.Printf("configuration: %v\n", cfg)
 }
 
 func logErrs(errs []error) {
 	for _, err := range errs {
-		log.Printf("[error]: %s", err)
+		log.Println(err)
 	}
 }

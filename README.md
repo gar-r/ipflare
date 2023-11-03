@@ -13,48 +13,46 @@ With `ipflare` you can quickly setup a small utility program that can run on the
 ## requirements
 
    * Your own domain
-   * DNS routed through CloudFlare for your domain
-   * CloudFlare API key
+   * DNS routed through Cloudflare for your domain
+   * Cloudflare API key token that can update DNS records for the configured zones
 
 ## usage
 
-You can configure the utility through command line arguments. To get help for the usage you can use the `-h` flag:
+You can configure the utility through a configuration file, and environment variables.
 
+### environment variables
+
+| Environment variable | Description                   |
+| -------------------- | ----------------------------- |
+| CONFIG_PATH          | override the config file path |
+| CLOUDFLARE_API_TOKEN | set/override the api key      |
+
+
+### configuration file
+
+The configuration file is loaded from `/etc/ipflare/config.yaml` by default.
+An example configuration can be found in the `etc/config.yaml` file under the source root.
+
+Example configuration:
+
+```yaml
+api_token: "xyz"          # the cloudflare api key token
+frequency: 30             # check frequency in seconds
+entries:
+  example.com:            # cloudflare zone name
+    - "foo.example.com"   # dns record to update (type "A" only)
+    - "bar.example.com"
+    - "baz.example.com"
+  domain.org:
+    - "domain.org"        # update root record
 ```
-ipflare -h
-```
-
-The command line flags are listed in the following table:
-
-| Flag | Description                                            | Mandatory | Default |
-| ---- | ------------------------------------------------------ | --------- | ------- |
-| -f   | frequency of ip change detection in seconds            | no        | 30s     |
-| -t   | your CloudFlare api token                              | yes       |         |
-| -e   | DNS entry to keep up-to-date in the zone/record format | no        |         |
-
 
 Notes:
 
-   * The `-e` flag can be added multiple times to update multiple records. Regardless of the order in which you specify the entries, requests to CloudFlare are automatically grouped by the zones to reduce the amount of requests required.
-   * It is recommended to adjust the defult update frequency (`-f`) while keeping the CloudFlare api rate limiting and the amount of entries to update in mind.
+   * the `CLOUDFLARE_API_TOKEN` environment variable overrides the one defined in the config file
+   * the tool only supports type A DNS records
+   * the root record can also be updated
 
-
-## example usage
-
-```
-ipflare "-t", "token" \
-        "-f", "15" \
-        "-e", "website1/mail.example.com" \
-        "-e", "website1/*.example.com" \
-        "-e", "website2/conference.chat.com"
-```
-
-The above command starts the application with a `15` second checking frequency, and the token `token` (for each request to CloudFlare this will be added to the Authentication request headers).
-
-The command adds the following DNS entries:
-
-   * zone: `website1`, records: `mail.example.com`, `*.example.com`
-   * zone: `website2`, records: `conference.chat.com`
 
 
 ## docker image
@@ -72,23 +70,10 @@ cd <source code root>
 docker build -t ipflare .
 ```
 
-When running the app with docker, the command line arguments can be specified in the usual fashion.
-
-Example:
+In order to configure the when using the docker image, use volumes/mounts and environment variables:
 
 ```
-docker run ipflare \
-   -t "..." \
-   -e "mysite/*.example.com"
-```
-
-Example output:
-
-```
-ipflare starting with the following parameters:
-auth token: [...]
- frequency: 30
-   entries: [mysite/*.example.com]
+docker run -e CLOUDFLARE_API_TOKEN="foobar" -v "$(pwd)/config.yaml:/etc/ipflare/config.yaml" git.okki.hu/ipflare
 ```
 
 ## running as a service
@@ -98,12 +83,10 @@ auth token: [...]
 If you are using the docker image, the recommended way is to use a docker restart policy (`--restart`):
 
 ```
-docker run -d --restart always --name ipflare git.okki.hu/garric/ipflare \
-   -t "..." \
-   -e "mysite/*.example.com"
+docker run -d --restart always ...
 ```
 
-To checking the logs, use docker to list the container id, then use the container id to display the logs:
+To check the logs, use docker to list the container id, then use the container id to display the logs:
 
 ```
 docker ps -a
@@ -122,16 +105,13 @@ Wants=network-online.target
 
 [Service]
 Restart=always
-ExecStart=/path/to/ipflare \
-    -t "token" \
-    -f 10 \
-    -e "my-site/*.example.com"
+ExecStart=/path/to/ipflare
 
 [Install]
 WantedBy=multi-user.target
 
 ```
-
+Make sure the config file is added to `/etc/ipflare/config.yaml`.
 Copy the service file to `/etc/systemd/system`, then start and enable the systemd service:
 
 ```
