@@ -14,6 +14,7 @@ const (
 	EnvApiKey     = "CLOUDFLARE_API_TOKEN"
 )
 
+// test
 const DefaultConfigPath = "/etc/ipflare/config.yaml"
 
 func main() {
