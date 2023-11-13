@@ -1,9 +1,7 @@
 package config
 
 import (
-	"fmt"
 	"os"
-	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -34,10 +32,4 @@ func (c *Config) String() string {
 		return err.Error()
 	}
 	return string(bytes)
-}
-
-func (c *Config) MaskedApiKey() string {
-	masked := len(c.ApiToken) / 6
-	unmasked := len(c.ApiToken) - masked
-	return fmt.Sprintf("%s%s", c.ApiToken[:masked], strings.Repeat("*", unmasked))
 }
