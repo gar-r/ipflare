@@ -19,10 +19,11 @@ const (
 type Ipify struct{}
 
 func (i *Ipify) GetPublicIp() (string, error) {
-	r := resty.New()
-	r.SetTransport(&http.Transport{
-		TLSHandshakeTimeout: 30 * time.Second,
-	})
+	r := resty.New().
+		SetTransport(&http.Transport{
+			TLSHandshakeTimeout: 30 * time.Second,
+		}).
+		SetRetryCount(3)
 	res, err := r.NewRequest().
 		SetQueryParam(QueryParamFormat, QueryParamFormatValue).
 		Get(IpifyUrl)
