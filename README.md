@@ -60,7 +60,7 @@ Notes:
 You can pull the latest docker image:
 
 ```
-docker pull git.okki.hu/garric/ipflare
+docker pull ghcr.io/gar-r/ipflare
 ```
 
 ...or use the included Dockerfile to build the image yourself.
