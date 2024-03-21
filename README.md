@@ -73,7 +73,7 @@ docker build -t ipflare .
 In order to configure the when using the docker image, use volumes/mounts and environment variables:
 
 ```
-docker run -e CLOUDFLARE_API_TOKEN="foobar" -v "$(pwd)/config.yaml:/etc/ipflare/config.yaml" git.okki.hu/ipflare
+docker run -e CLOUDFLARE_API_TOKEN="foobar" -v "$(pwd)/config.yaml:/etc/ipflare/config.yaml" ghcr.io/gar-r/ipflare
 ```
 
 ## running as a service
