@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/cloudflare/cloudflare-go v0.80.0
-	github.com/go-resty/resty/v2 v2.10.0
+	github.com/go-resty/resty/v2 v2.11.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
