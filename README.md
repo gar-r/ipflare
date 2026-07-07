@@ -36,15 +36,16 @@ An example configuration can be found in the `etc/config.yaml` file under the so
 Example configuration:
 
 ```yaml
-api_token: "xyz"          # the cloudflare api key token
-frequency: 30             # check frequency in seconds
+frequency: 30                    # check frequency in seconds
+restart_containers:              # containers to restart after ip change (optional)
+  - "nginx"
 entries:
-  example.com:            # cloudflare zone name
-    - "foo.example.com"   # dns record to update (type "A" only)
+  example.com:                   # cloudflare zone name
+    - "foo.example.com"          # dns record to update (type "A" only)
     - "bar.example.com"
     - "baz.example.com"
   domain.org:
-    - "domain.org"        # update root record
+    - "domain.org"               # update root record
 ```
 
 Notes:
@@ -74,6 +75,34 @@ In order to configure the when using the docker image, use volumes/mounts and en
 
 ```
 docker run -e CLOUDFLARE_API_TOKEN="foobar" -v "$(pwd)/config.yaml:/etc/ipflare/config.yaml" ghcr.io/gar-r/ipflare
+```
+
+### restarting containers after an ip change
+
+If `restart_containers` is configured, ipflare will restart the listed containers
+after a detected IP change. This requires the Docker socket to be mounted into
+the container:
+
+```
+docker run -e CLOUDFLARE_API_TOKEN="foobar" \
+  -v "$(pwd)/config.yaml:/etc/ipflare/config.yaml" \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  ghcr.io/gar-r/ipflare
+```
+
+You can also use the included `docker-compose.yml`:
+
+```yaml
+services:
+  ipflare:
+    image: ghcr.io/gar-r/ipflare
+    container_name: ipflare
+    restart: unless-stopped
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+    volumes:
+      - ./config.yaml:/etc/ipflare/config.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 ```
 
 ## running as a service
