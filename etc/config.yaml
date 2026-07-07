@@ -1,4 +1,6 @@
 frequency: 30             # check frequency in seconds
+restart_containers:       # containers to restart after ip change (requires docker socket)
+  - "nginx"
 entries:
   example.com:            # cloudflare zone name
     - "foo.example.com"   # dns record to update (type "A" only)

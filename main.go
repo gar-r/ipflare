@@ -2,6 +2,7 @@ package main
 
 import (
 	"ipflare/config"
+	"ipflare/container"
 	"ipflare/dns"
 	"ipflare/ip"
 	"log"
@@ -23,10 +24,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	startLoop(cd, updater)
+	startLoop(cd, updater, cfg.RestartContainers)
 }
 
-func startLoop(cd *ip.ChangeDetector, updater dns.Updater) {
+func startLoop(cd *ip.ChangeDetector, updater dns.Updater, restartContainers []string) {
 	cd.Start()
 	for {
 		select {
@@ -38,6 +39,7 @@ func startLoop(cd *ip.ChangeDetector, updater dns.Updater) {
 			if len(errs) > 0 {
 				logErrs(errs)
 			}
+			container.Restart(restartContainers)
 		}
 	}
 }

@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	Entries   EntrySet `yaml:"entries"`
-	ApiToken  string   `yaml:"api_token"`
-	Frequency int      `yaml:"frequency"`
+	Entries           EntrySet `yaml:"entries"`
+	ApiToken          string   `yaml:"api_token"`
+	Frequency         int      `yaml:"frequency"`
+	RestartContainers []string `yaml:"restart_containers"`
 }
 
 type EntrySet map[string][]string
