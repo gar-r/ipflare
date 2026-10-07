@@ -5,8 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 )
 
 func Restart(names []string) {
@@ -24,7 +23,7 @@ func Restart(names []string) {
 	defer cancel()
 
 	for _, name := range names {
-		if err := cli.ContainerRestart(ctx, name, container.StopOptions{}); err != nil {
+		if _, err := cli.ContainerRestart(ctx, name, client.ContainerRestartOptions{}); err != nil {
 			log.Printf("failed to restart container %q: %v", name, err)
 		} else {
 			log.Printf("restarted container %q", name)
